@@ -15,7 +15,7 @@
 
 typedef struct {
     Rectangle rect;
-    Vector2 lastPositions[(1280 * 720) / 32];
+    Vector2 lastPositions[(1280 * 720) / SNAKE_SEG_SIZE];
     int score;
     int direction;
 } snakeHead;
@@ -102,10 +102,10 @@ int main(int argc, char* argv[]) {
 
         if (head.direction != NULL) {
             drawSnake(&head, head.direction, &moveCount);
-            DrawRectangle(foodX, foodY, 32, 32, SKYBLUE);
-            if (CheckCollisionRecs((Rectangle) { foodX, foodY, 32, 32 }, head.rect)) {
-                foodX = (rand() % 40) * 32;
-                foodY = (rand() % 23) * 32;
+            DrawRectangle(foodX, foodY, SNAKE_SEG_SIZE, SNAKE_SEG_SIZE, SKYBLUE);
+            if (CheckCollisionRecs((Rectangle) { foodX, foodY, SNAKE_SEG_SIZE, SNAKE_SEG_SIZE }, head.rect)) {
+                foodX = (rand() % 40) * SNAKE_SEG_SIZE;
+                foodY = (rand() % 23) * SNAKE_SEG_SIZE;
                 head.score++;
             }
 
