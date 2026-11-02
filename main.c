@@ -22,11 +22,11 @@ typedef struct {
 void initSnake(snakeHead* head) {
     head->score = 1;
 
-    head->rect.width = SNAKE_SEG_SIZE;
-    head->rect.height = SNAKE_SEG_SIZE;
+    head->rect.width = SNAKE_SEG_SIZE - 2;
+    head->rect.height = SNAKE_SEG_SIZE - 2;
 
-    head->rect.x = (float) SNAKE_SEG_SIZE * 10;
-    head->rect.y = (float) SNAKE_SEG_SIZE * 6;
+    head->rect.x = (float) SNAKE_SEG_SIZE * 10 + 1;
+    head->rect.y = (float) SNAKE_SEG_SIZE * 6 + 1;
 }
 
 void drawSnake(snakeHead* head, int direction, int* count) {
