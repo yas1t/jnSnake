@@ -1,10 +1,9 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <raylib.h>
 #include <time.h>
 
 #define WIN_WIDTH 1280
-#define WIN_HEIGHT 736
+#define WIN_HEIGHT 720
 
 #define SNAKE_SEG_SIZE 32
 
@@ -15,7 +14,7 @@
 
 typedef struct {
     Rectangle rect;
-    Vector2 lastPositions[(1280 * 720) / SNAKE_SEG_SIZE];
+    Vector2 lastPositions[(WIN_WIDTH * WIN_HEIGHT) / SNAKE_SEG_SIZE];
     int score;
     int direction;
 } snakeHead;
@@ -26,8 +25,8 @@ void initSnake(snakeHead* head) {
     head->rect.width = SNAKE_SEG_SIZE;
     head->rect.height = SNAKE_SEG_SIZE;
 
-    head->rect.x = WIN_WIDTH / 2;
-    head->rect.y = WIN_HEIGHT / 2;
+    head->rect.x = (float) SNAKE_SEG_SIZE * 10;
+    head->rect.y = (float) SNAKE_SEG_SIZE * 6;
 }
 
 void drawSnake(snakeHead* head, int direction, int* count) {
@@ -35,14 +34,20 @@ void drawSnake(snakeHead* head, int direction, int* count) {
     head->lastPositions[*count] = (Vector2){ head->rect.x, head->rect.y };
 
     for (int i = 0; i < head->score; i++) {
-        DrawRectangle(head->lastPositions[i].x, head->lastPositions[i].y, SNAKE_SEG_SIZE, SNAKE_SEG_SIZE, RAYWHITE);
+        DrawRectangle(
+            head->lastPositions[i].x,
+            head->lastPositions[i].y,
+            SNAKE_SEG_SIZE,
+            SNAKE_SEG_SIZE,
+            RAYWHITE
+        );
     }
     if (*count >= head->score) *count = 0;
 }
 
 void drawEndScreen() {
     ClearBackground(GRAY);
-    DrawText("Game Over", WIN_WIDTH / 2, WIN_HEIGHT / 2, 64, SKYBLUE);
+    DrawText("Game Over", WIN_WIDTH / 2 - 190, WIN_HEIGHT / 2 - 100, 64, SKYBLUE);
 }
 
 int main(int argc, char* argv[]) {
@@ -54,8 +59,11 @@ int main(int argc, char* argv[]) {
     time_t t;
     srand((unsigned)time(&t));
 
-    int foodX = rand() % 1280;
-    int foodY = rand() % 720;
+    int foodX = rand() % WIN_WIDTH / SNAKE_SEG_SIZE;
+    int foodY = rand() % WIN_HEIGHT / SNAKE_SEG_SIZE;
+
+    foodX *= SNAKE_SEG_SIZE;
+    foodY *= SNAKE_SEG_SIZE;
 
     snakeHead head;
     initSnake(&head);
@@ -66,11 +74,11 @@ int main(int argc, char* argv[]) {
         framecount++;
 
         switch (GetKeyPressed()) {
-        case KEY_W: head.direction = SNAKE_DIR_UP; break;
-        case KEY_S: head.direction = SNAKE_DIR_DOWN; break;
-        case KEY_A: head.direction = SNAKE_DIR_LEFT; break;
-        case KEY_D: head.direction = SNAKE_DIR_RIGHT; break;
-        default: break;
+            case KEY_W: head.direction = SNAKE_DIR_UP; break;
+            case KEY_S: head.direction = SNAKE_DIR_DOWN; break;
+            case KEY_A: head.direction = SNAKE_DIR_LEFT; break;
+            case KEY_D: head.direction = SNAKE_DIR_RIGHT; break;
+            default: break;
         }
         if (framecount % 9 == 0) {
             moveCount++;
@@ -100,7 +108,7 @@ int main(int argc, char* argv[]) {
 
         BeginDrawing();
 
-        if (head.direction != NULL) {
+        if (head.direction != 0) {
             drawSnake(&head, head.direction, &moveCount);
             DrawRectangle(foodX, foodY, SNAKE_SEG_SIZE, SNAKE_SEG_SIZE, SKYBLUE);
             if (CheckCollisionRecs((Rectangle) { foodX, foodY, SNAKE_SEG_SIZE, SNAKE_SEG_SIZE }, head.rect)) {
@@ -114,8 +122,7 @@ int main(int argc, char* argv[]) {
 
         if (winState == false) {
             drawEndScreen();
-            if (framecount % 120 == 0)
-                break;
+            if (framecount % 300 == 0) break;
         }
         EndDrawing();
     }
